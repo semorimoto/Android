@@ -36,7 +36,7 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 	private Button btnDel; // スケジュール削除
 
 	// 画面最大幅で表示
-	private final int FP = ViewGroup.LayoutParams.FILL_PARENT;
+	private final int MP = ViewGroup.LayoutParams.MATCH_PARENT;
 	// 必要な値で表示
 	private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -60,13 +60,20 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 
 		// タイトルエディットの生成
 		layout.addView(makeLabel("タイトル"));
-		edtTitle = makeEditor("", FP, WC);
-		layout.addView(edtBody);
+		edtTitle = makeEditor("", MP, WC);
+		layout.addView(edtTitle);
 
 		// 本文エディットの生成
 		layout.addView(makeLabel("本文"));
-		edtBody=makeEditor("", FP, 80);
+		edtBody = makeEditor("", MP, 200);
+		edtBody.setSingleLine(false);
 		layout.addView(edtBody);
+
+		// アラームチェックボックス
+		chkAlarm = new CheckBox(this);
+		chkAlarm.setOnCheckedChangeListener(this);
+		chkAlarm.setText("指定時刻にアラームを鳴らす");
+		layout.addView(chkAlarm);
 
 
 		// ------------------------
@@ -76,19 +83,22 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 		layoutDate.setOrientation(LinearLayout.HORIZONTAL);
 
 		// 年エディットの生成
-		edtYear = makeNumericEditor("", WC, WC, 80, 4);
+		edtYear = makeNumericEditor("", WC, WC, 200, 4);
 		layoutDate.addView(makeLabel("年"));
 		layoutDate.addView(edtYear);
 
 		// 月エディットの生成
-		edtMonth = makeNumericEditor("", WC, WC, 40, 2);
+		edtMonth = makeNumericEditor("", WC, WC, 100, 2);
 		layoutDate.addView(makeLabel("月"));
 		layoutDate.addView(edtMonth);
 
 		// 日エディットの生成
-		edtDay = makeNumericEditor("", WC, WC, 40, 2);
+		edtDay = makeNumericEditor("", WC, WC, 100, 2);
 		layoutDate.addView(makeLabel("日"));
 		layoutDate.addView(edtDay);
+
+		// メインレイアウトに追加
+		layout.addView(layoutDate);
 
 
 		// ------------------------
@@ -97,19 +107,18 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 		LinearLayout layoutMinutes = new LinearLayout(this);
 		layoutMinutes.setOrientation(LinearLayout.HORIZONTAL);
 
-		// 時間エディットの生成
+		// 時エディットの生成
 		layoutMinutes.addView(makeLabel("時"));
-		edtHour = makeNumericEditor("", WC, WC, 40, 2);
+		edtHour = makeNumericEditor("", WC, WC, 100, 2);
+		layoutMinutes.addView(edtHour);
 
 		// 分エディットの生成
 		layoutMinutes.addView(makeLabel("分"));
-		edtMinutes = makeNumericEditor("", WC, WC, 40, 2);
+		edtMinutes = makeNumericEditor("", WC, WC, 100, 2);
+		layoutMinutes.addView(edtMinutes);
 
-
-		// アラームチェックボックス
-		chkAlarm = new CheckBox(this);
-		chkAlarm.setOnCheckedChangeListener(this);
-		chkAlarm.setText("指定時刻にアラームを鳴らす");
+		// メインレイアウトに追加
+		layout.addView(layoutMinutes);
 
 
 		// ------------------------
@@ -137,9 +146,8 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 		});
 		layoutBtn.addView(btnDel);
 
-		layout.addView(chkAlarm);
-		layout.addView(layoutDate);
-		layout.addView(layoutMinutes);
+		// メインレイアウトに追加
+		layout.addView(layoutBtn);
 	}
 
 	/**
@@ -167,13 +175,8 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 		editor.setText(text);
 		editor.setGravity(Gravity.LEFT|Gravity.TOP);
 		editor.setHorizontallyScrolling(true); // 必要に応じて縦スクロール表示
-		editor.setLayoutParams(new LinearLayout.LayoutParams(w,h));
+		editor.setLayoutParams(new LinearLayout.LayoutParams(w, h));
 		return editor;
-/*
-		editor.setWidth(w);
-		editor.setFilters(setMaxlength(maxlen);
-		editor.setInputType(InputType.TYPE_CLASS_NUMBER);
-*/
 	}
 
 	/**
@@ -244,7 +247,7 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 				// OKボタンクリックの処理
 			}
 		});
-		ad.setPositiveButton("cancel", new DialogInterface.OnClickListener() {
+		ad.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// キャンセルボタンクリックの処理
