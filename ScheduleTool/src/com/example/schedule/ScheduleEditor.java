@@ -61,6 +61,7 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 		//update.
 
 		// b
+		// c
 
 		// タイトルエディットの生成
 		layout.addView(makeLabel("タイトル"));
