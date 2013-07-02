@@ -58,6 +58,8 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 		layout.setOrientation(LinearLayout.VERTICAL);
 		layout.setGravity(Gravity.LEFT);
 
+		//update.
+		
 		// タイトルエディットの生成
 		layout.addView(makeLabel("タイトル"));
 		edtTitle = makeEditor("", MP, WC);
