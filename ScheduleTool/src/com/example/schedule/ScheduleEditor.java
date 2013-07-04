@@ -20,6 +20,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.schedule.util.ScheduleUtil;
+
 public class ScheduleEditor extends Activity implements OnCheckedChangeListener, OnClickListener {
 
 	private EditText edtTitle; // タイトル
@@ -44,6 +46,11 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setLayout();
+
+		/// file read test
+		String test = ScheduleUtil.readFile(this, "test.txt");
+		edtTitle.setText(test);
+
 	}
 
 	/**
@@ -226,7 +233,8 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 	public void onClick(View view) {
 		if (view == btnAdd) {
 			// 追加ボタン押下時のダイアログを表示
-			showDialog(this, "", "スケジュール追加ボタンクリック");
+			//showDialog(this, "", "スケジュール追加ボタンクリック");
+			ScheduleUtil.writeFile(this, "スケジュール登録ボタンクリック", "test.txt");
 		} else if (view == btnDel) {
 			// 削除ボタン押下時のダイアログを表示
 			showDialog(this, "", "スケジュール削除ボタンクリック２");
