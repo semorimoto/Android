@@ -1,5 +1,11 @@
 package com.example.schedule;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -47,10 +53,7 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 		super.onCreate(savedInstanceState);
 		setLayout();
 
-		/// file read test
-		String test = ScheduleUtil.readFile(this, "test.txt");
-		edtTitle.setText(test);
-
+		readScheduleBody("test.properties");
 	}
 
 	/**
@@ -234,7 +237,23 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 		if (view == btnAdd) {
 			// 追加ボタン押下時のダイアログを表示
 			//showDialog(this, "", "スケジュール追加ボタンクリック");
-			ScheduleUtil.writeFile(this, "スケジュール登録ボタンクリック", "test.txt");
+			//ScheduleUtil.writeFile(this, "スケジュール登録ボタンクリック", "test.txt");
+			HashMap<String, String> map = new LinkedHashMap<String, String>();
+			map.put("text", edtBody.getText().toString());
+			String scheduleDate = new StringBuffer("")
+				.append(edtYear.getText().toString())
+				.append("/")
+				.append(edtMonth.getText().toString())
+				.append("/")
+				.append(edtDay.getText().toString())
+				.append(" ")
+				.append(edtHour.getText().toString())
+				.append(":")
+				.append(edtMinutes.getText().toString())
+				.toString();
+			map.put("schedule", scheduleDate);
+			ScheduleUtil.writeProperties(this, map, "test.properties");
+			//finish();
 		} else if (view == btnDel) {
 			// 削除ボタン押下時のダイアログを表示
 			showDialog(this, "", "スケジュール削除ボタンクリック２");
@@ -271,4 +290,35 @@ public class ScheduleEditor extends Activity implements OnCheckedChangeListener,
 		ad.show();
 	}
 
+	private void readScheduleBody(String fileName) {
+		try {
+			HashMap<String, String> prop = ScheduleUtil.readProperties(this, fileName);
+			if (prop == null) {
+				return;
+			}
+
+			// 本文
+			String text = (String)prop.get("text");
+			edtBody.setText(text);
+
+			// 日付
+			if (prop.containsKey("schedule")) {
+				SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd hh:mm");
+				String schedule = (String)prop.get("schedule");
+				Date d = df.parse(schedule);
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(d);
+
+				edtYear.setText(String.valueOf(cal.get(Calendar.YEAR)));
+				edtMonth.setText(String.valueOf(cal.get(Calendar.MONTH) + 1));
+				edtDay.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
+
+				edtHour.setText(String.valueOf(cal.get(Calendar.HOUR)));
+				edtMinutes.setText(String.valueOf(cal.get(Calendar.MINUTE)));
+
+			}
+		} catch (Exception e) {
+			showDialog(this, "", fileName + ":ファイルの読み込みに失敗しました。");
+		}
+	}
 }
